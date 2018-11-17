@@ -11,8 +11,6 @@ public class GraphAlgorithms {
 	 * This method returns a list of shortest path distances and of previous nodes for each destination node in g.
 	 * @param g
 	 * @param s
-	 * @param dist
-	 * @param prev
 	 */
 	public static int[] dijkstrasAlgorithm(Graph<Integer> g, int s) {
 		// Getting node list
