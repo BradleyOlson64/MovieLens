@@ -15,7 +15,7 @@ import util.DataLoader;
 
 public class MovieLensAnalyzer {
 	
-	public static final int THRESHOLD = 10; // TODO: do javadocs
+	public static final int THRESHOLD = 50; // TODO: do javadocs
 	public static final int RATINGS_ARRAY_SIZE = 11; // TODO: do javadocs
 
 	
@@ -109,64 +109,70 @@ public class MovieLensAnalyzer {
 	}
 	
 	@SuppressWarnings("null")
-	public static Graph<Integer> option_one(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> ratings) {
-		System.out.println("Entering option one"); // TODO: remove
+	public static Graph<Integer> option_one(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> reviewers) {
+//		System.out.println("Entering option one"); // TODO: remove
 		
-		// print this later
-		//		The number of nodes
-		//		The number of edges
-		//		The density of the graph defined as D = E / (V*(V-1)) for a directed graph
-		//		The maximum degree (i.e. the largest number of outgoing edges of any node)
-		//		The diameter of the graph (i.e. the longest shortest path)
-		//		The average length of the shortest paths in the graph
-		
-		// Create a Graph of Movies
+		// Create an empty Graph of Movies
 		Graph<Integer> moviesGraph = new Graph<Integer>();
 		
-		// Populating Graph with movies dataset
-		for ( Integer tmp : movies.keySet() ) {
+		// Populate graph with the movies dataset
+		for ( Integer tmp : movies.keySet()) {
+			// System.out.println("Adding Vertex @ DEBUG [1]: " + tmp); // Debug: Vertices are added.
 			moviesGraph.addVertex(tmp);
+			// System.out.println("Contains Vertex @ DEBUG[2]: " +  moviesGraph.containsNode(tmp)); // Debug: check if vertices have been aded.
 		}
 		
-		// TODO: remove validation print 
-//		System.out.println(moviesGraph.getVertices());
-		
-		// Created a 2D Array of Booleans that tells whether each movie got over a certain number (THRESHOLD) for each type of review.
+		// Create a 2D Array of Integers that tells whether each movie got over a certain number (THRESHOLD) for each type of review. 
 		int[][] alpha = new int[moviesGraph.numVertices()][RATINGS_ARRAY_SIZE];
-	
-		// 
-		Integer[] intRatings = ratings.keySet().toArray(new Integer[ratings.keySet().size()]);
-//		System.out.println(Arrays.toString(intRatings)); // TODO: remove
+//		System.out.println("numVertices() @ DEBUG [3]: " + moviesGraph.numVertices());
+//		System.out.println("RATINGS_ARRAY_SIZE @ DEBUG [4]: " + RATINGS_ARRAY_SIZE); // 2D[x][0] = 0.0, 2D[x][1] = 0.5, ..., etc.
+		
+		Integer[] reviewerIds = reviewers.keySet().toArray(new Integer[reviewers.keySet().size()]);		
+//		System.out.println("intRatings.length @ DEBUG[5]: " + reviewerIds.length);
 		
 		
-		// filling the array
+		Integer[] moviesIds = moviesGraph.getVertices().toArray(new Integer[moviesGraph.getVertices().size()]);
+		
+		
+		// fill the alpha array with ratings
 		Double tmp = 0.0;
-		for (int i=0; i < moviesGraph.numVertices(); i++) {
-			for (int j=0; j < intRatings.length; j++) {
-				tmp = ratings.get(intRatings[j]).getRatings().get(i);
+		for ( int i=0; i < moviesIds.length; i++) {
+			for (int j=0; j < reviewerIds.length; j++) {
+				tmp = reviewers.get(reviewerIds[j]).getRatings().get(moviesIds[i]);
 				if (tmp != null) {
+//					System.out.println(moviesIds[i]);
+//					System.out.println("Other: " + tmp);
 					alpha[i][(int) (tmp * 2)] += 1;
 				}
+//				break;
 			}
 		}
 		
-		for (int i=0; i < alpha.length; i++) {
+		
+		for (int i=0; i < moviesIds.length; i++) {
+//			System.out.println("[movie id]= "+ moviesIds[i] + " => " + Arrays.toString(alpha[i]));
 			for (int j=0; j < alpha[i].length; j++) {
-//				System.out.format("i:[%d], j:[%d] = [%d]\n",i, j, alpha[i][j]  );
-				
-				if ( alpha[i][j] >= THRESHOLD) {
-					for (int k=1; k < alpha.length; k++) {
-						if (alpha[k][j] >= THRESHOLD) {
-							moviesGraph.addEdge(i, k);
-//							moviesGraph.addEdge(k, i);
+								
+				if (alpha[i][j] >= THRESHOLD) {
+//					System.out.println(alpha[i][j]);
+					for (int k=0; k < alpha.length; k++) {
+						if (alpha[k][j] >= THRESHOLD && k != i && !moviesGraph.edgeExists(moviesIds[i], moviesIds[k])) {
+//							System.out.println("[ids i and k]: = "+ moviesIds[i] + ", "+ moviesIds[k]);
+//							System.out.format("\ti:[%d], j:[%d] = [%d]\n",i, j, alpha[i][j]);
+//							System.out.format("\tk:[%d], j:[%d] = [%d]\n",i, j, alpha[k][j]);
+//							System.out.println("\n");
+							moviesGraph.addEdge(moviesIds[i], moviesIds[k]);
 						}
 					}
 				}
 			}
+//			break;
 		}
+//		System.out.println(Arrays.deepToString(alpha));
+
+//		System.out.println(moviesGraph.numEdges());
 		
-//		System.out.println(moviesGraph.getVertices());
-		System.out.println(moviesGraph.getNeighbors(50));
+		
 		return moviesGraph;
 	
 	}
@@ -175,16 +181,11 @@ public class MovieLensAnalyzer {
 	
 	public static void printGraphStats(Graph<Integer> tmpGraph) {}
 	public static void printNodeInfo(Graph<Integer> tmpGraph) {}
-	public static void getShortestPath(Graph<Integer> tmpGraph) {//, int src, int dest) {
-		// TODO: validation
-		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 50);//, src);
-//		int nodeCurrent = shortestPath[dest];
-//		int tmp = nodeCurrent;
-//		while ( nodeCurrent != -1 ) {
-//			System.out.println(nodeCurrent);
-//			
-//		}
+	public static void getShortestPath(Graph<Integer> tmpGraph) {
+		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1); // breaks at 2 and 50 and probably other values too.
 		System.out.println(Arrays.toString(shortestPath));
+		
+		// TODO: your dijkstras algorithm breaks.........
 	}
 
 }
