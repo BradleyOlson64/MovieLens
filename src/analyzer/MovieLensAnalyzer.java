@@ -1,6 +1,7 @@
 package analyzer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class MovieLensAnalyzer {
 		Scanner sc = new Scanner(System.in);  
         System.out.println("[Option 1] u and v are adjacent if both movies have 50 reviewers that gave the same rating.");
         System.out.println("[Option 2] u and v are adjacent if both movies were made in the same year (regardless of rating).");
-        System.out.println("[Option 3] Recommendation System (N/A).");
+        System.out.println("[Option 3] u and v are adjacent if both movies contain the same string (Exploring the Graph Extra Credit).");
         
         System.out.println("\nChoose an Option to build the graph (1-3):");
 
@@ -170,7 +171,7 @@ public class MovieLensAnalyzer {
 		}
 //		System.out.println(Arrays.deepToString(alpha));
 
-//		System.out.println(moviesGraph.numEdges());
+		System.out.println(moviesGraph.numEdges());
 		
 		
 		return moviesGraph;
@@ -190,7 +191,6 @@ public class MovieLensAnalyzer {
 		
 		Integer[] moviesIds = moviesGraph.getVertices().toArray(new Integer[moviesGraph.getVertices().size()]);
 
-		int optionTwoThreshold = 5;
 		int movieX = 0;
 		int movieY = 0;
 		for (int i=0; i < moviesIds.length; i++) {
@@ -199,8 +199,8 @@ public class MovieLensAnalyzer {
 			for (int j=0; j < moviesIds.length; j++) {
 				movieY = movies.get(moviesIds[j]).getYear();
 				if ( movieX == movieY && i != j && !moviesGraph.edgeExists(moviesIds[i], moviesIds[j])) {
-					System.out.println("[ids i and k]: = "+ moviesIds[i] + ", "+ moviesIds[j]);
-					System.out.println("\n");
+//					System.out.println("[ids i and k]: = "+ moviesIds[i] + ", "+ moviesIds[j]);
+//					System.out.println("\n");
 					moviesGraph.addEdge(moviesIds[i], moviesIds[j]);
 				}
 			}
@@ -212,11 +212,62 @@ public class MovieLensAnalyzer {
 		
 		return moviesGraph;
 	}
-	public static  Graph<Integer> option_three(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> reviewers) { return null; }
+	public static  Graph<Integer> option_three(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> reviewers) { 
+		
+		// Create an empty Graph of Movies
+		Graph<Integer> moviesGraph = new Graph<Integer>();
+		
+		// Populate graph with the movies dataset
+		for ( Integer tmp : movies.keySet()) {
+			// System.out.println("Adding Vertex @ DEBUG [1]: " + tmp); // Debug: Vertices are added.
+			// System.out.println("Contains Vertex @ DEBUG[2]: " +  moviesGraph.containsNode(tmp)); // Debug: check if vertices have been aded.
+		}
+		
+		Integer[] moviesIds = movies.keySet().toArray(new Integer[movies.keySet().size()]);
+		
+		// Get Keyword from user.
+        System.out.println("Enter a new keyword to find all movies based on searched term:");
+		Scanner sc = new Scanner(System.in);
+        String keyword = sc.nextLine();
+        
+
+		String titleX = "";
+		String titleY = "";
+		
+		ArrayList<Integer> keywordMatchedMovies = new ArrayList<Integer>();
+		
+		// create vertices based on keyword input
+		for (int i=0; i < moviesIds.length; i++) {
+			titleX = movies.get(moviesIds[i]).getTitle().toUpperCase();
+			
+			if ( titleX.contains(keyword.toUpperCase())) {
+				System.out.println( titleX );
+				
+			
+				keywordMatchedMovies.add(moviesIds[i]);
+				moviesGraph.addVertex(moviesIds[i]);
+			} 
+		}
+		
+		// populate graph with edges 
+		for (int i=0; i < keywordMatchedMovies.size(); i++) {
+			for (int j=0; j < keywordMatchedMovies.size(); j++) {
+				if ( i != j) {
+					moviesGraph.addEdge(keywordMatchedMovies.get(i), keywordMatchedMovies.get(j));
+				}
+			}
+		}
+		
+		System.out.println(moviesGraph.numVertices());
+		System.out.println(moviesGraph.numEdges());
+		
+		return moviesGraph;
+	}
 	
 	public static void printGraphStats(Graph<Integer> tmpGraph) {}
 	public static void printNodeInfo(Graph<Integer> tmpGraph) {}
 	public static void getShortestPath(Graph<Integer> tmpGraph) {
+		// TODO: pick only vertices that are within the graph
 		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1000); // breaks at 2 and 50 and probably other values too.
 		System.out.println(Arrays.toString(shortestPath));
 		
