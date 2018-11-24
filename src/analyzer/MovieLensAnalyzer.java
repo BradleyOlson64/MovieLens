@@ -341,10 +341,32 @@ public class MovieLensAnalyzer {
 	 * @param tmpGraph a populated graph
 	 */
 	public static void getShortestPath(Graph<Integer> tmpGraph) {
-		// TODO: pick only vertices that are within the graph
-		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1000); // breaks at 2 and 50 and probably other values too.
-		System.out.println(Arrays.toString(shortestPath));
 		
+		Scanner sc = new Scanner(System.in);
+		int start = -1;
+		int end = -1;
+		
+		try {
+			System.out.println("Enter starting node (1-1000): ");
+			start = sc.nextInt();
+			System.out.println("Enter ending node (1-1000): ");
+			end = sc.nextInt();
+			
+			if ( !(start > 0 && start <= 1000) || !(end > 0 && end <= 1000) ) {
+				throw new InputMismatchException();
+			}
+			
+		} catch (InputMismatchException e) {
+			System.out.println("You've entered a wrong movieID: " + start + " or " + end);
+			System.out.println("Program is now exiting!");
+			System.exit(0);
+		}
+		
+		
+		// TODO: pick only vertices that are within the graph
+//		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1000); // breaks at 2 and 50 and probably other values too.
+//		System.out.println(Arrays.toString(shortestPath));
+//		
 		// TODO: your dijkstras algorithm breaks.........
 	}
 
