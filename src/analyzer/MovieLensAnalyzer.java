@@ -79,35 +79,34 @@ public class MovieLensAnalyzer {
 
         }
 
+        int exploreOption = 4;
         
-        System.out.println("[Option 1]");
-        System.out.println("[Option 2]");
-        System.out.println("[Option 3]");
-        System.out.println("[Option 4]");
-        
-        int exploreOption = sc.nextInt();
-        switch (exploreOption) {
-        	case 1:
-        		printGraphStats(tmpGraph);
-        		break;
-        	case 2:
-        		printNodeInfo(tmpGraph);
-        		break;
-        	case 3:
-        		getShortestPath(tmpGraph);
-        		break;
-        	case 4: 
-    		default:
-    			System.exit(0);
-			
-        }
-       
-        System.out.println("Program is now exiting!");
-        
-        
-        
-        System.exit(0);
-	}
+        while (true) {
+	        System.out.println("[Option 1] Print out statistics about the graph");
+	        System.out.println("[Option 2] Print node information");
+	        System.out.println("[Option 3] Display shortest path between two nodes");
+	        System.out.println("[Option 4] Quit");
+	        
+	        exploreOption = sc.nextInt();
+	        switch (exploreOption) {
+	        	case 1:
+	        		printGraphStats(tmpGraph);
+	        		break;
+	        	case 2:
+	        		printNodeInfo(tmpGraph);
+	        		break;
+	        	case 3:
+	        		getShortestPath(tmpGraph);
+	        		break;
+	        	case 4:
+	    		default:
+	    	        System.out.println("Program is now exiting!");
+	    			System.exit(0);
+	    			break;
+				
+	        }
+        }    
+    	}
 	
 	@SuppressWarnings("null")
 	public static Graph<Integer> option_one(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> reviewers) {
@@ -171,7 +170,7 @@ public class MovieLensAnalyzer {
 		}
 //		System.out.println(Arrays.deepToString(alpha));
 
-		System.out.println(moviesGraph.numEdges());
+
 		
 		
 		return moviesGraph;
@@ -206,7 +205,7 @@ public class MovieLensAnalyzer {
 			}
 		}
 		
-		System.out.println(moviesGraph.numEdges());
+	
 
 		
 		
@@ -258,13 +257,52 @@ public class MovieLensAnalyzer {
 			}
 		}
 		
-		System.out.println(moviesGraph.numVertices());
-		System.out.println(moviesGraph.numEdges());
+
 		
 		return moviesGraph;
 	}
 	
-	public static void printGraphStats(Graph<Integer> tmpGraph) {}
+	/**
+	 * Builds a string to print graph statistics about given graph data structure.
+	 * @param tmpGraph a graph
+	 */
+	public static void printGraphStats(Graph<Integer> tmpGraph) {
+		
+		StringBuilder sb = new StringBuilder("Graph Statistics: \n");
+		sb.append("\t|V| = ").append(tmpGraph.numVertices()).append(" vertices.\n");
+		sb.append("\t|E| = ").append(tmpGraph.numEdges()).append(" edges\n");
+		sb.append("\tDensity = ").append( (double) (tmpGraph.numEdges())/ ( tmpGraph.numVertices() * (tmpGraph.numVertices()-1) )  ).append("\n");
+		
+		// determine highest degree node
+		int maxDegreeVertex = -1;
+		for (int moviesId : tmpGraph.getVertices()) {
+			if (maxDegreeVertex == -1) {
+				maxDegreeVertex = moviesId;
+			}
+			if (tmpGraph.degree(moviesId) > tmpGraph.degree(maxDegreeVertex)) {
+				maxDegreeVertex = moviesId;
+			}
+		}
+		
+		sb.append("\tMax. Degree = ").append(tmpGraph.degree(maxDegreeVertex)).append(" (node ").append(maxDegreeVertex).append(")\n");
+		
+		// TODO: determine longest shortest path (diameter of graph)
+		sb.append("\tDiameter = ").append("\n");
+		
+		// TODO: determine average length of the shortest paths in the graph.
+		sb.append("\tAvg. Path Length = ").append("\n");
+		
+		
+		System.out.println(sb.toString());
+//		f the user chooses option 1, you should print out the following information about the graph:
+//
+//			The number of nodes
+//			The number of edges
+//			The density of the graph defined as D = E / (V*(V-1)) for a directed graph
+//			The maximum degree (i.e. the largest number of outgoing edges of any node)
+//			The diameter of the graph (i.e. the longest shortest path)
+//			The average length of the shortest paths in the graph
+	}
 	public static void printNodeInfo(Graph<Integer> tmpGraph) {}
 	public static void getShortestPath(Graph<Integer> tmpGraph) {
 		// TODO: pick only vertices that are within the graph
