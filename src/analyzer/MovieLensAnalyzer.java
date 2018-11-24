@@ -17,7 +17,7 @@ import util.DataLoader;
 
 public class MovieLensAnalyzer {
 	
-	public static final int THRESHOLD = 50; // TODO: do javadocs
+	public static final int THRESHOLD = 10; // TODO: do javadocs
 	public static final int RATINGS_ARRAY_SIZE = 11; // TODO: do javadocs
 
 	
@@ -168,7 +168,7 @@ public class MovieLensAnalyzer {
 				if (alpha[i][j] >= THRESHOLD) {
 //					System.out.println(alpha[i][j]);
 					for (int k=0; k < alpha.length; k++) {
-						if (alpha[k][j] >= THRESHOLD && k != i && !moviesGraph.edgeExists(moviesIds[i], moviesIds[k]) && !	moviesGraph.edgeExists(moviesIds[i], moviesIds[k])) {
+						if (alpha[k][j] >= THRESHOLD && k != i && !moviesGraph.edgeExists(moviesIds[i], moviesIds[k]) && !	moviesGraph.edgeExists(moviesIds[k], moviesIds[i])) {
 //							System.out.println("[ids i and k]: = "+ moviesIds[i] + ", "+ moviesIds[k]);
 //							System.out.println("[ids i and k]: = "+ moviesIds[k] + ", "+ moviesIds[i]);
 //							System.out.format("\ti:[%d], j:[%d] = [%d]\n",i, j, alpha[i][j]);
@@ -180,7 +180,7 @@ public class MovieLensAnalyzer {
 					}
 				}
 			}
-			if (i==50) break;
+//			if (i==50) break;
 		}
 //		System.out.println(Arrays.deepToString(alpha));
 
@@ -336,7 +336,7 @@ public class MovieLensAnalyzer {
 		sb.append("Neighbors:\n");
 		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id);
 		for ( int neighbor : neighborMovies) {
-			sb.append("\t").append(movies.get(neighbor).getTitle()).append("\n");
+			sb.append("\t").append(movies.get(neighbor).getTitle()).append(" ").append(movies.get(neighbor).getMovieId()).append("\n");
 		}
 		
 		if (neighborMovies.isEmpty()) {
