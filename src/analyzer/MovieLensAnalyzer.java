@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import data.Movie;
@@ -57,8 +58,14 @@ public class MovieLensAnalyzer {
         System.out.println("[Option 3] u and v are adjacent if both movies contain the same string (Exploring the Graph Extra Credit).");
         
         System.out.println("\nChoose an Option to build the graph (1-3):");
-
-        int adjOption = sc.nextInt();
+        
+        int adjOption = 4;
+        try {
+        		adjOption = sc.nextInt();
+        } catch (InputMismatchException e) {
+        		System.out.println("You've picked a wrong option. Program is exiting.");
+        		System.exit(0);
+        }
        
         
         Graph<Integer> tmpGraph = new Graph<Integer>();
@@ -87,13 +94,18 @@ public class MovieLensAnalyzer {
 	        System.out.println("[Option 3] Display shortest path between two nodes");
 	        System.out.println("[Option 4] Quit");
 	        
-	        exploreOption = sc.nextInt();
+	        try {
+	        		exploreOption = sc.nextInt();
+	        } catch (InputMismatchException e) {
+	        		exploreOption = 4;
+	        }
+	        
 	        switch (exploreOption) {
 	        	case 1:
 	        		printGraphStats(tmpGraph);
 	        		break;
 	        	case 2:
-	        		printNodeInfo(tmpGraph);
+	        		printNodeInfo(tmpGraph, movies);
 	        		break;
 	        	case 3:
 	        		getShortestPath(tmpGraph);
@@ -156,17 +168,19 @@ public class MovieLensAnalyzer {
 				if (alpha[i][j] >= THRESHOLD) {
 //					System.out.println(alpha[i][j]);
 					for (int k=0; k < alpha.length; k++) {
-						if (alpha[k][j] >= THRESHOLD && k != i && !moviesGraph.edgeExists(moviesIds[i], moviesIds[k])) {
+						if (alpha[k][j] >= THRESHOLD && k != i && !moviesGraph.edgeExists(moviesIds[i], moviesIds[k]) && !	moviesGraph.edgeExists(moviesIds[i], moviesIds[k])) {
 //							System.out.println("[ids i and k]: = "+ moviesIds[i] + ", "+ moviesIds[k]);
+//							System.out.println("[ids i and k]: = "+ moviesIds[k] + ", "+ moviesIds[i]);
 //							System.out.format("\ti:[%d], j:[%d] = [%d]\n",i, j, alpha[i][j]);
 //							System.out.format("\tk:[%d], j:[%d] = [%d]\n",i, j, alpha[k][j]);
 //							System.out.println("\n");
 							moviesGraph.addEdge(moviesIds[i], moviesIds[k]);
+							moviesGraph.addEdge(moviesIds[k], moviesIds[i]);
 						}
 					}
 				}
 			}
-//			break;
+			if (i==50) break;
 		}
 //		System.out.println(Arrays.deepToString(alpha));
 
@@ -235,6 +249,8 @@ public class MovieLensAnalyzer {
 		
 		ArrayList<Integer> keywordMatchedMovies = new ArrayList<Integer>();
 		
+		// TODO: might need to populate all movies in the vertices to abide by option 2
+		
 		// create vertices based on keyword input
 		for (int i=0; i < moviesIds.length; i++) {
 			titleX = movies.get(moviesIds[i]).getTitle().toUpperCase();
@@ -294,16 +310,42 @@ public class MovieLensAnalyzer {
 		
 		
 		System.out.println(sb.toString());
-//		f the user chooses option 1, you should print out the following information about the graph:
-//
-//			The number of nodes
-//			The number of edges
-//			The density of the graph defined as D = E / (V*(V-1)) for a directed graph
-//			The maximum degree (i.e. the largest number of outgoing edges of any node)
-//			The diameter of the graph (i.e. the longest shortest path)
-//			The average length of the shortest paths in the graph
 	}
-	public static void printNodeInfo(Graph<Integer> tmpGraph) {}
+	public static void printNodeInfo(Graph<Integer> tmpGraph, HashMap<Integer, Movie> movies) {
+		
+		StringBuilder sb = new StringBuilder("");
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.print("Enter Movie Id (1-1000): "); 
+		
+		// Handle movieID input
+		int id = -1;
+		try {
+			id = sc.nextInt();
+			if ( !(id > 0 && id <= 1000) ) {
+				throw new InputMismatchException("You've entered a wrong movieID: " + id);
+			}
+		} catch (InputMismatchException e) {
+			System.out.println("You've entered a wrong movieID: " + id);
+			System.out.println("Program is now exiting!");
+			System.exit(0);
+		}
+		
+		// Handle print node information
+		sb.append(movies.get(id)).append("\n");
+		sb.append("Neighbors:\n");
+		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id);
+		for ( int neighbor : neighborMovies) {
+			sb.append("\t").append(movies.get(neighbor).getTitle()).append("\n");
+		}
+		
+		if (neighborMovies.isEmpty()) {
+			sb.append("\tNo Neighbors\n");
+		}
+	
+		System.out.println(sb.toString());
+		
+	}
 	public static void getShortestPath(Graph<Integer> tmpGraph) {
 		// TODO: pick only vertices that are within the graph
 		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1000); // breaks at 2 and 50 and probably other values too.
