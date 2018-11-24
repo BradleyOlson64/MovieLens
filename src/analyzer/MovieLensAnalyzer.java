@@ -52,7 +52,7 @@ public class MovieLensAnalyzer {
 		// TODO: scanner sucks - do stuff with try catch blocks nerd
 		Scanner sc = new Scanner(System.in);  
         System.out.println("[Option 1] u and v are adjacent if both movies have 50 reviewers that gave the same rating.");
-        System.out.println("[Option 2] u and v are adjacent if the same 11 users watched both movies (regardless of rating).");
+        System.out.println("[Option 2] u and v are adjacent if both movies were made in the same year (regardless of rating).");
         System.out.println("[Option 3] Recommendation System (N/A).");
         
         System.out.println("\nChoose an Option to build the graph (1-3):");
@@ -176,13 +176,48 @@ public class MovieLensAnalyzer {
 		return moviesGraph;
 	
 	}
-	public static Graph<Integer> option_two(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> ratings) { return null; }
-	public static  Graph<Integer> option_three(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> ratings) { return null; }
+	public static Graph<Integer> option_two(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> reviewers) { 
+		
+		// Create an empty Graph of Movies
+		Graph<Integer> moviesGraph = new Graph<Integer>();
+		
+		// Populate graph with the movies dataset
+		for ( Integer tmp : movies.keySet()) {
+			// System.out.println("Adding Vertex @ DEBUG [1]: " + tmp); // Debug: Vertices are added.
+			moviesGraph.addVertex(tmp);
+			// System.out.println("Contains Vertex @ DEBUG[2]: " +  moviesGraph.containsNode(tmp)); // Debug: check if vertices have been aded.
+		}
+		
+		Integer[] moviesIds = moviesGraph.getVertices().toArray(new Integer[moviesGraph.getVertices().size()]);
+
+		int optionTwoThreshold = 5;
+		int movieX = 0;
+		int movieY = 0;
+		for (int i=0; i < moviesIds.length; i++) {
+			movieX = movies.get(moviesIds[i]).getYear();
+			
+			for (int j=0; j < moviesIds.length; j++) {
+				movieY = movies.get(moviesIds[j]).getYear();
+				if ( movieX == movieY && i != j && !moviesGraph.edgeExists(moviesIds[i], moviesIds[j])) {
+					System.out.println("[ids i and k]: = "+ moviesIds[i] + ", "+ moviesIds[j]);
+					System.out.println("\n");
+					moviesGraph.addEdge(moviesIds[i], moviesIds[j]);
+				}
+			}
+		}
+		
+		System.out.println(moviesGraph.numEdges());
+
+		
+		
+		return moviesGraph;
+	}
+	public static  Graph<Integer> option_three(HashMap<Integer, Movie> movies, HashMap<Integer, Reviewer> reviewers) { return null; }
 	
 	public static void printGraphStats(Graph<Integer> tmpGraph) {}
 	public static void printNodeInfo(Graph<Integer> tmpGraph) {}
 	public static void getShortestPath(Graph<Integer> tmpGraph) {
-		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1); // breaks at 2 and 50 and probably other values too.
+		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1000); // breaks at 2 and 50 and probably other values too.
 		System.out.println(Arrays.toString(shortestPath));
 		
 		// TODO: your dijkstras algorithm breaks.........
