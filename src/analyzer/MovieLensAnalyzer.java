@@ -17,7 +17,7 @@ import util.DataLoader;
 
 public class MovieLensAnalyzer {
 	
-	public static final int THRESHOLD = 10; // TODO: do javadocs
+	public static final int THRESHOLD = 50; // TODO: do javadocs
 	public static final int RATINGS_ARRAY_SIZE = 11; // TODO: do javadocs
 
 	
@@ -197,9 +197,7 @@ public class MovieLensAnalyzer {
 		
 		// Populate graph with the movies dataset
 		for ( Integer tmp : movies.keySet()) {
-			// System.out.println("Adding Vertex @ DEBUG [1]: " + tmp); // Debug: Vertices are added.
 			moviesGraph.addVertex(tmp);
-			// System.out.println("Contains Vertex @ DEBUG[2]: " +  moviesGraph.containsNode(tmp)); // Debug: check if vertices have been aded.
 		}
 		
 		Integer[] moviesIds = moviesGraph.getVertices().toArray(new Integer[moviesGraph.getVertices().size()]);
@@ -230,11 +228,11 @@ public class MovieLensAnalyzer {
 		// Create an empty Graph of Movies
 		Graph<Integer> moviesGraph = new Graph<Integer>();
 		
-		// Populate graph with the movies dataset
-		for ( Integer tmp : movies.keySet()) {
-			// System.out.println("Adding Vertex @ DEBUG [1]: " + tmp); // Debug: Vertices are added.
-			// System.out.println("Contains Vertex @ DEBUG[2]: " +  moviesGraph.containsNode(tmp)); // Debug: check if vertices have been aded.
-		}
+//		// Populate graph with the movies dataset
+//		for ( Integer tmp : movies.keySet()) {
+//			// System.out.println("Adding Vertex @ DEBUG [1]: " + tmp); // Debug: Vertices are added.
+//			// System.out.println("Contains Vertex @ DEBUG[2]: " +  moviesGraph.containsNode(tmp)); // Debug: check if vertices have been aded.
+//		}
 		
 		Integer[] moviesIds = movies.keySet().toArray(new Integer[movies.keySet().size()]);
 		
@@ -256,12 +254,11 @@ public class MovieLensAnalyzer {
 			titleX = movies.get(moviesIds[i]).getTitle().toUpperCase();
 			
 			if ( titleX.contains(keyword.toUpperCase())) {
-				System.out.println( titleX );
-				
-			
+//				System.out.println( titleX );
 				keywordMatchedMovies.add(moviesIds[i]);
-				moviesGraph.addVertex(moviesIds[i]);
 			} 
+			moviesGraph.addVertex(moviesIds[i]);
+
 		}
 		
 		// populate graph with edges 
@@ -336,7 +333,7 @@ public class MovieLensAnalyzer {
 		sb.append("Neighbors:\n");
 		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id);
 		for ( int neighbor : neighborMovies) {
-			sb.append("\t").append(movies.get(neighbor).getTitle()).append(" ").append(movies.get(neighbor).getMovieId()).append("\n");
+			sb.append("\t").append(movies.get(neighbor).getTitle()).append("\n");
 		}
 		
 		if (neighborMovies.isEmpty()) {
