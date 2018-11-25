@@ -286,7 +286,17 @@ public class MovieLensAnalyzer {
 		sb.append("\tMax. Degree = ").append(tmpGraph.degree(maxDegreeVertex)).append(" (node ").append(maxDegreeVertex).append(")\n");
 		
 		// TODO: determine longest shortest path (diameter of graph)
-		sb.append("\tDiameter = ").append("\n");
+		sb.append("\tDiameter = ");
+		
+		int[][] allShortestPaths = GraphAlgorithms.floydWarshall(tmpGraph);
+		
+		for (int i=0; i < allShortestPaths.length; i++) {
+			System.out.println(allShortestPaths[i].length);
+			System.out.println(Arrays.toString(allShortestPaths[i]));
+			break;
+		}
+		
+		sb.append("\n");
 		
 		// TODO: determine average length of the shortest paths in the graph.
 		sb.append("\tAvg. Path Length = ").append("\n");
@@ -362,10 +372,10 @@ public class MovieLensAnalyzer {
 			System.exit(0);
 		}
 		
+		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, start); // breaks at 2 and 50 and probably other values too.
+
 		
-		// TODO: pick only vertices that are within the graph
-//		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, 1000); // breaks at 2 and 50 and probably other values too.
-//		System.out.println(Arrays.toString(shortestPath));
+		System.out.println(Arrays.toString(shortestPath));
 //		
 		// TODO: your dijkstras algorithm breaks.........
 	}
