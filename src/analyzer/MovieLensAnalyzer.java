@@ -331,9 +331,9 @@ public class MovieLensAnalyzer {
 		}
 		
 		// Handle print node information
-		sb.append(movies.get(id)).append("\n");
+		sb.append(movies.get(id-1)).append("\n");
 		sb.append("Neighbors:\n");
-		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id);
+		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id-1);
 		for ( int neighbor : neighborMovies) {
 			sb.append("\t").append(movies.get(neighbor).getTitle()).append(" " +movies.get(neighbor).getMovieId()).append("\n");
 		}
@@ -356,6 +356,7 @@ public class MovieLensAnalyzer {
 		int start = -1;
 		int end = -1;
 		
+		// handle user input
 		try {
 			System.out.println("Enter starting node (1-1000): ");
 			start = sc.nextInt();
@@ -376,16 +377,11 @@ public class MovieLensAnalyzer {
 		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, start); // breaks at 2 and 50 and probably other values too.
 		System.out.println(Arrays.toString(shortestPath));
 
-		
+		// handle shortest path between two nodes.
 		StringBuilder sb = new StringBuilder();
-		
-//		start--;
-//		end--;
 		int path = end;
 		boolean noPath = false;
 		
-		// start 1
-		// end 20 ( 1 => 20)
 		while ( path != start ) {
 			
 			System.out.println("debug: " + shortestPath[path-1]);
@@ -401,11 +397,12 @@ public class MovieLensAnalyzer {
 			
 		}
 		
+		// same node edge case
 		if (end == start) {
 			sb.append(end).append(" => ").append(start);
 		}
 	
-		
+		// no path edge case
 		if (noPath) {
 			sb.append("There is no path from start node ").append(start).append(" to end node ").append(end);
 		} 
