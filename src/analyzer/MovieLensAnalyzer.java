@@ -26,18 +26,20 @@ public class MovieLensAnalyzer {
 		// Your program should take two command-line arguments: 
 		// 1. A ratings file
 		// 2. A movies file with information on each movie e.g. the title and genres
-		/*
+		
 		if(args.length != 2){
 			System.err.println("Usage: java MovieLensAnalyzer [ratings_file] [movie_title_file]");
 			System.exit(-1);
-		}*/
+		}
+				
+		//  these will be command-line arguments
+		String ratingsString = args[0]; // use for command line arguments "./src/ml-latest-small/ratings.csv";
+		String moviesString = args[1]; // use for command line arguments "./src/ml-latest-small/movies.csv";
 		
-		
-		// FILL IN THE REST OF YOUR PROGRAM
-		
-		// TODO: these will be command-line arguments
-		String ratingsString = "./src/ml-latest-small/ratings.csv";
-		String moviesString = "./src/ml-latest-small/movies.csv";
+		if (!ratingsString.endsWith(".csv") || !moviesString.endsWith(".csv")) {
+			System.out.println("files need to end with a .csv");
+			System.exit(0);
+		}
 		
 		// utilize ETL(EXTRACT|TRANSFORM|LOAD) process
 		DataLoader movieLensDataLoader = new DataLoader();
@@ -397,9 +399,7 @@ public class MovieLensAnalyzer {
 		boolean noPath = false;
 		
 		while ( path != start ) {
-			
-			System.out.println("debug: " + shortestPath[path-1]);
-			
+						
 			if ( shortestPath[path-1] == -1 ) {
 				noPath = true; 
 				break;
