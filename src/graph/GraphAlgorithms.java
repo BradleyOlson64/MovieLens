@@ -5,7 +5,11 @@ import java.util.List;
 
 import util.PriorityQueue;
 
-
+/**
+ * This class contains Dijkstras and floydWarshall algorithms to be used in MovieLens
+ * @author baolson
+ * @version 2.0
+ */
 public class GraphAlgorithms {
 	/**
 	 * This method returns a list of shortest path distances and of previous nodes for each destination node in g.
@@ -96,7 +100,10 @@ public class GraphAlgorithms {
 		}
 		return wlast;
 	}
-	
+	/**
+	 * This main method tests the outputs of the two algorithms with a dummy graph.
+	 * @param Args
+	 */
 	public static void main(String[] Args) {
 		Graph<Integer> g = new Graph<Integer>();
 		g.addVertex(1);
