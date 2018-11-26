@@ -44,7 +44,13 @@ public class GraphAlgorithms {
 			// Getting adjacency list of V
 			List<Integer> adjacencyList = g.getNeighbors(currVertex);
 			for(Integer node: adjacencyList) {
-				int alt = currDistance + 1;
+				int alt;
+				if(currDistance != Integer.MAX_VALUE) {
+					alt = currDistance + 1;
+				}
+				else {
+					alt = currDistance;
+				}
 				if(alt<dist[node-1]) {
 					dist[node-1]= alt;
 					prev[node-1]= currVertex;
@@ -102,7 +108,7 @@ public class GraphAlgorithms {
 		g.addEdge(2, 4);
 		g.addEdge(2, 3);
 		System.out.println("Testing dijkstras");
-		int[] digResult = dijkstrasAlgorithm(g,1);
+		int[] digResult = dijkstrasAlgorithm(g,2);
 		System.out.println(Arrays.toString(digResult));
 		System.out.println("");
 		System.out.println("Testing floydWarshall");
