@@ -241,6 +241,7 @@ public class MovieLensAnalyzer {
 			titleX = movies.get(moviesIds[i]).getTitle().toUpperCase();
 			
 			if ( titleX.contains(keyword.toUpperCase())) {
+				System.out.println(movies.get(moviesIds[i]).getMovieId() + " : " +movies.get(moviesIds[i]).getTitle());
 				keywordMatchedMovies.add(moviesIds[i]);
 			} 
 			moviesGraph.addVertex(moviesIds[i]);
@@ -255,9 +256,7 @@ public class MovieLensAnalyzer {
 				}
 			}
 		}
-		
-
-		
+			
 		return moviesGraph;
 	}
 	
@@ -285,21 +284,37 @@ public class MovieLensAnalyzer {
 		
 		sb.append("\tMax. Degree = ").append(tmpGraph.degree(maxDegreeVertex)).append(" (node ").append(maxDegreeVertex).append(")\n");
 		
-		// TODO: determine longest shortest path (diameter of graph)
+		// determine longest shortest path (diameter of graph)
 		sb.append("\tDiameter = ");
 		
-//		int[][] allShortestPaths = GraphAlgorithms.floydWarshall(tmpGraph);
-//		
-//		for (int i=0; i < allShortestPaths.length; i++) {
-//			System.out.println(allShortestPaths[i].length);
-//			System.out.println(Arrays.toString(allShortestPaths[i]));
-//			break;
-//		}
+		int[][] allShortestPaths = GraphAlgorithms.floydWarshall(tmpGraph);
+
 		
-		sb.append("\n");
+		int maxDiameter = 0;
+		int maxI = 0;
+		int maxJ = 0;
+		int pathCount = 0;
+		int pathSum = 0;
+		for (int i=0; i < allShortestPaths.length; i++) {
+			for (int j=0; j < allShortestPaths[i].length; j++) {
+				if (maxDiameter < allShortestPaths[i][j] && allShortestPaths[i][j] != Integer.MAX_VALUE) {
+					System.out.println(allShortestPaths[i][j]);
+					maxDiameter = allShortestPaths[i][j];
+					maxI = i;
+					maxJ = j;
+				}
+				
+				if (allShortestPaths[i][j] != Integer.MAX_VALUE) {
+					pathCount++;
+					pathSum += allShortestPaths[i][j];
+				}
+			}
+		}
 		
-		// TODO: determine average length of the shortest paths in the graph.
-		sb.append("\tAvg. Path Length = ").append("\n");
+		sb.append(maxDiameter).append(" (from ").append(maxI+1).append(" to ").append(maxJ+1).append(")\n");
+		
+		// determine average length of the shortest paths in the graph.
+		sb.append("\tAvg. Path Length = ").append( (double) pathSum / pathCount ).append("\n");
 		
 		
 		System.out.println(sb.toString());
@@ -331,9 +346,9 @@ public class MovieLensAnalyzer {
 		}
 		
 		// Handle print node information
-		sb.append(movies.get(id-1)).append("\n");
+		sb.append(movies.get(id)).append("\n");
 		sb.append("Neighbors:\n");
-		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id-1);
+		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id);
 		for ( int neighbor : neighborMovies) {
 			sb.append("\t").append(movies.get(neighbor).getTitle()).append(" " +movies.get(neighbor).getMovieId()).append("\n");
 		}
@@ -375,7 +390,6 @@ public class MovieLensAnalyzer {
 		
 		// Find the shortest path between start node and end node.
 		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, start); // breaks at 2 and 50 and probably other values too.
-		System.out.println(Arrays.toString(shortestPath));
 
 		// handle shortest path between two nodes.
 		StringBuilder sb = new StringBuilder();
