@@ -7,7 +7,7 @@ import util.PriorityQueue;
 
 /**
  * This class contains Dijkstras and floydWarshall algorithms to be used in MovieLens
- * @author baolson
+ * @author Brad Olson & Thavy Thach
  * @version 2.0
  */
 public class GraphAlgorithms {
