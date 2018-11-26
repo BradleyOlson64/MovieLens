@@ -17,7 +17,7 @@ import util.DataLoader;
 
 public class MovieLensAnalyzer {
 	
-	public static final int THRESHOLD = 10; // TODO: do javadocs
+	public static final int THRESHOLD = 50; // TODO: do javadocs
 	public static final int RATINGS_ARRAY_SIZE = 11; // TODO: do javadocs
 
 	
@@ -374,13 +374,41 @@ public class MovieLensAnalyzer {
 		
 		// Find the shortest path between start node and end node.
 		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, start); // breaks at 2 and 50 and probably other values too.
+		System.out.println(Arrays.toString(shortestPath));
+
+		
 		StringBuilder sb = new StringBuilder();
+		
+//		start--;
+//		end--;
 		int path = end;
+		boolean noPath = false;
+		
+		// start 1
+		// end 20 ( 1 => 20)
 		while ( path != start ) {
-			sb.append(path).append(" => ").append(shortestPath[path]).append("\n");
-			path = shortestPath[path];
+			
+			System.out.println("debug: " + shortestPath[path-1]);
+			
+			if ( shortestPath[path-1] == -1 ) {
+				noPath = true; 
+				break;
+			}
+			
+			sb.append(path).append(" => ").append(shortestPath[path-1]).append("\n"); // 20 >= 1
+			path = shortestPath[path-1];
+			
+			
 		}
-		sb.append(path).append(" => ").append(start);
+		
+		if (end == start) {
+			sb.append(end).append(" => ").append(start);
+		}
+	
+		
+		if (noPath) {
+			sb.append("There is no path from start node ").append(start).append(" to end node ").append(end);
+		} 
 
 		System.out.println(sb.toString());
 	}
