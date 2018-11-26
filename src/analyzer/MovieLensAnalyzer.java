@@ -17,7 +17,7 @@ import util.DataLoader;
 
 public class MovieLensAnalyzer {
 	
-	public static final int THRESHOLD = 50; // TODO: do javadocs
+	public static final int THRESHOLD = 10; // TODO: do javadocs
 	public static final int RATINGS_ARRAY_SIZE = 11; // TODO: do javadocs
 
 	
@@ -113,7 +113,7 @@ public class MovieLensAnalyzer {
 	        		printNodeInfo(tmpGraph, movies);
 	        		break;
 	        	case 3:
-	        		getShortestPath(tmpGraph);
+	        		getShortestPath(tmpGraph, movies);
 	        		break;
 	        	case 4:
 	    		default:
@@ -288,13 +288,13 @@ public class MovieLensAnalyzer {
 		// TODO: determine longest shortest path (diameter of graph)
 		sb.append("\tDiameter = ");
 		
-		int[][] allShortestPaths = GraphAlgorithms.floydWarshall(tmpGraph);
-		
-		for (int i=0; i < allShortestPaths.length; i++) {
-			System.out.println(allShortestPaths[i].length);
-			System.out.println(Arrays.toString(allShortestPaths[i]));
-			break;
-		}
+//		int[][] allShortestPaths = GraphAlgorithms.floydWarshall(tmpGraph);
+//		
+//		for (int i=0; i < allShortestPaths.length; i++) {
+//			System.out.println(allShortestPaths[i].length);
+//			System.out.println(Arrays.toString(allShortestPaths[i]));
+//			break;
+//		}
 		
 		sb.append("\n");
 		
@@ -335,7 +335,7 @@ public class MovieLensAnalyzer {
 		sb.append("Neighbors:\n");
 		ArrayList<Integer> neighborMovies = (ArrayList<Integer>) tmpGraph.getNeighbors(id);
 		for ( int neighbor : neighborMovies) {
-			sb.append("\t").append(movies.get(neighbor).getTitle()).append("\n");
+			sb.append("\t").append(movies.get(neighbor).getTitle()).append(" " +movies.get(neighbor).getMovieId()).append("\n");
 		}
 		
 		if (neighborMovies.isEmpty()) {
@@ -350,7 +350,7 @@ public class MovieLensAnalyzer {
 	 * Finds the shortest path between two nodes.
 	 * @param tmpGraph a populated graph
 	 */
-	public static void getShortestPath(Graph<Integer> tmpGraph) {
+	public static void getShortestPath(Graph<Integer> tmpGraph, HashMap<Integer, Movie> movies) {
 		
 		Scanner sc = new Scanner(System.in);
 		int start = -1;
@@ -372,12 +372,17 @@ public class MovieLensAnalyzer {
 			System.exit(0);
 		}
 		
+		// Find the shortest path between start node and end node.
 		int[] shortestPath = GraphAlgorithms.dijkstrasAlgorithm(tmpGraph, start); // breaks at 2 and 50 and probably other values too.
+		StringBuilder sb = new StringBuilder();
+		int path = end;
+		while ( path != start ) {
+			sb.append(path).append(" => ").append(shortestPath[path]).append("\n");
+			path = shortestPath[path];
+		}
+		sb.append(path).append(" => ").append(start);
 
-		
-		System.out.println(Arrays.toString(shortestPath));
-//		
-		// TODO: your dijkstras algorithm breaks.........
+		System.out.println(sb.toString());
 	}
 
 }
